@@ -1,0 +1,12 @@
+{% extends 'hlavni.html' %}
+
+{% block content %}
+    <div>
+        <form method="POST" style="text-align: center;">
+            {% csrf_token %}
+            <p>Opravdu chcete smazat "{{obj}}"?</p>
+            <a href="{{request.META.HTTP_REFERER}}">Jít zpátky</a>
+            <input type="submit" value="Potvrdit">   
+        </form>
+    </div>
+{% endblock %}

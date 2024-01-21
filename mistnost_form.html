@@ -1,0 +1,14 @@
+{% extends 'hlavni.html' %}
+{% block content %}
+    <div style=" max-width: 400px;
+    margin: 0 auto;">
+        <form method="POST" style="text-align: center;">
+            {% csrf_token %}
+            <div>
+            {{ form.as_p }}
+            </div>
+            <input type="submit" value="Odeslat">   
+        </form>
+    </div>
+{% endblock %}
+

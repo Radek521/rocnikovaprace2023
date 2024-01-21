@@ -1,0 +1,42 @@
+{% extends 'hlavni.html' %}
+
+{% block content %}
+
+
+{% if page == 'login' %}
+<div style="text-align: center;">
+    <form method="POST" action="" style="max-width: 400px;
+    margin: 0 auto;">
+        {% csrf_token %}
+
+        <label>Uživ. jméno:</label>
+        <input type="text" name="username" placeholder="Zadejte jméno" /> <br> <br>
+
+        <label>Vaše heslo:</label>
+        <input type="password" name="password" placeholder="Zadejte heslo" /> <br> <br>
+
+        <input type="submit" value="Přihlásit se"/>
+    </form>
+
+    <p>Ještě nezaregistrován?</p>
+    <a href="{% url 'register' %}">Registrace</a>
+</div>
+
+{% else %}
+
+<div>
+    <form method="POST" action="" style=" max-width: 400px;
+    margin: 0 auto;
+    text-align: center;
+    ">
+        {% csrf_token %}
+        <div>
+        {{form.as_p}}
+        <br>
+        </div>
+        <input type="submit" value="Registrovat se" />
+    </form>
+    <p style="text-align: center;">Již zaregistrován? <a href="{% url 'login' %}">Login</a> </p>
+</div>
+{% endif %}
+{% endblock content %}

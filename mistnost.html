@@ -1,0 +1,59 @@
+{% extends 'hlavni.html' %}
+
+{% block content %}
+
+<style>
+    .room-container{
+        display: grid;
+        grid-template-columns: 3fr 1fr;
+    }
+
+
+</style>
+
+<div class="room-container">
+    <div>
+    <h2 style="text-align: center;">Právě jste v místnosti: {{mistnost.jmeno}}.</h2>
+
+    <h3 style="text-align: center;">Popis místnosti: </h3>
+    <p style="padding-left: 10%; padding-right: 10%;">{{mistnost.popis}}.</p>
+
+    <div class="comment-wrapper">
+        <h2 style="text-align: center;">Konverzace: </h2>
+        <hr>
+        {% for zprava in zpravy_mistnosti %}
+            <div style="text-align: center;"">
+                <span>@{{zprava.user}}, před {{zprava.vytvoreno|timesince}} </span>
+                <br>
+                {% if request.user == zprava.user %}
+                <a href="{% url 'delete-zprava' zprava.id %}"(X)</a>
+                {% endif %}
+                
+                <div>
+                <p> {{zprava.zprava}}.</p>
+                </div>
+                <hr>
+            </div>
+        {% endfor %}
+    </div>
+
+        {% if request.user.is_authenticated %}
+            <div class="comment-form">
+                <form method="POST" action="">
+                {% csrf_token %}
+                <input type="text" name="zprava_body" placeholder="Napište svou zprávu zde...">
+                </form>
+            </div>
+        {% endif %}
+    </div>
+
+    <div style="text-align: center;">
+        <h3>Účastníci</h3>
+        <hr>
+        {% for user in ucastnici  %}
+            <p>@{{user.username}}</p>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}
