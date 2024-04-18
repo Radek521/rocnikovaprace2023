@@ -1,11 +1,16 @@
 {% extends 'hlavni.html' %}
 {% block content %}
-    <div style=" max-width: 400px;
+    <div class="messages-container" style=" max-width: 500px; max-height: 550px;
     margin: 0 auto;">
         <form method="POST" style="text-align: center;">
             {% csrf_token %}
             <div>
-            {{ form.as_p }}
+            {% for field in form %}
+                <div>
+                    {{ field.label_tag }} {{ field }}
+                    <br><br>
+                </div>
+                {% endfor %}
             </div>
             <input type="submit" value="Odeslat">   
         </form>

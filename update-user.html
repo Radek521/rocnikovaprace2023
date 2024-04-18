@@ -1,0 +1,25 @@
+{% extends 'hlavni.html' %} 
+
+{% block content %}
+<main class="update-account layout" style="text-align: center;">
+
+  <h2>Upravte Vaše údaje</h2>
+  <br>
+
+  <div class="messages-container" style="width:40%; margin-left:30% ;">
+  <form class="form" action="" method="POST">
+    {% csrf_token %}
+    {% for field in form %}
+    <div>
+      <label>{{field.label}}</label>
+      <br>
+      {{field}}
+    </div>
+    <br>
+    {% endfor %}
+      <button type="submit">Aktualizovat</button>
+    </div>
+  </form>
+
+</main>
+{% endblock content %}

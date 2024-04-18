@@ -1,7 +1,7 @@
 {% extends 'hlavni.html' %}
 
 {% block content %}
-    <div>
+    <div class="messages-container">
         <form method="POST" style="text-align: center;">
             {% csrf_token %}
             <p>Opravdu chcete smazat "{{obj}}"?</p>

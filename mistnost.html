@@ -3,56 +3,128 @@
 {% block content %}
 
 <style>
-    .room-container{
-        display: grid;
-        grid-template-columns: 3fr 1fr;
+   
+    .message {
+    margin-top: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    border-radius: 15px;
+    width: 50%;
+    max-width: 50%;
+    word-wrap: break-word;
     }
+
+    .message-right {
+    background-color: #F4F3EA; /* Example color for user's messages */
+    float: right;
+    border: 2px solid #d6d5ce;
+    }
+
+    .message-left {
+    float: left;
+    background-color: #dbdbdb;
+    border: 2px solid #b7b7b7;;
+    clear: both;
+    }
+
+    .messages-container {
+    max-height: 400px;
+    overflow-y: auto; 
+    
+    border-color:#393737;
+    border-width: 4px;
+    border-radius: 30px; 
+
+    padding: 10px; 
+    margin: 10px;
+    background: linear-gradient(
+            90deg,
+            #ffea2d,
+            #f5ff3c
+            );
+    background-size: 100%;
+
+
+    }
+
+   
+    
+.messages-container::-webkit-scrollbar {
+    width: 10px; 
+}
+
+.messages-container::-webkit-scrollbar-track {
+    background: #393737;
+    border-radius: 20px;
+}
+
+.messages-container::-webkit-scrollbar-thumb {
+    background: #ccc; 
+    border-radius: 20px;
+}
+
+span{
+    font-weight: bold;
+}
 
 
 </style>
 
 <div class="room-container">
-    <div>
-    <h2 style="text-align: center;">Právě jste v místnosti: {{mistnost.jmeno}}.</h2>
+    <div class="messages-container" style="width: 30%; float: left; word-wrap: break-word; text-align: center;">
+        <p>Právě jste v místnosti: <br> <span>{{mistnost.jmeno}}</span></p> <br>
+        <p style="padding-left: 20%;padding-right: 20%;">Popis místnosti: <br> <span>{{mistnost.popis}}</span></p> <br>
+        <p style="padding-bottom: 5px;">Účastníci:<span> <br>
+        {% for user in ucastnici %}
+            {{user.username}} <br>
+        {% endfor %}
+        </span>
+        </p>
+        {% if request.user.is_authenticated %}
+        <div style="margin-bottom: 10px; text-align: center; width: 100%;">
+            <form method="POST" action="">
+            {% csrf_token %}
+            <input type="text" name="zprava_body" placeholder="Vaše zpráva..." style="width: 70%; margin-left: 0px;">
+            </form>
+        </div>
+    {% endif %}
 
-    <h3 style="text-align: center;">Popis místnosti: </h3>
-    <p style="padding-left: 10%; padding-right: 10%;">{{mistnost.popis}}.</p>
+
+
+
+
+
+    </div>
 
     <div class="comment-wrapper">
-        <h2 style="text-align: center;">Konverzace: </h2>
-        <hr>
-        {% for zprava in zpravy_mistnosti %}
-            <div style="text-align: center;"">
-                <span>@{{zprava.user}}, před {{zprava.vytvoreno|timesince}} </span>
-                <br>
-                {% if request.user == zprava.user %}
-                <a href="{% url 'delete-zprava' zprava.id %}"(X)</a>
+     <div class="messages-container" style="margin-top: 10px;">
+        {% for zprava in zpravy_mistnosti reversed %}
+            <div>
+                {% if zprava.user == request.user %}
+                    <div class="message message-right">
+                        <a href="{% url 'delete-zprava' zprava.id %}" style="font-size: small; margin-left: 10px;">(X)</a><br>
+                        <p style="margin-left: 10px; font-weight: bold;">{{ zprava.zprava }}</p>
+                    </div>
+                {% else %}
+                    <div class="message message-left">
+                        <p style="font-size: small; margin-left: 10px;">"{{zprava.user}}" před {{zprava.vytvoreno|timesince}}</p>
+                        <p style="margin-left: 10px; font-weight: bold;">{{ zprava.zprava }}</p>
+                    </div>
                 {% endif %}
-                
-                <div>
-                <p> {{zprava.zprava}}.</p>
-                </div>
-                <hr>
             </div>
+            
         {% endfor %}
+
+            
+
+        </div>
+       
+    
+
     </div>
 
-        {% if request.user.is_authenticated %}
-            <div class="comment-form">
-                <form method="POST" action="">
-                {% csrf_token %}
-                <input type="text" name="zprava_body" placeholder="Napište svou zprávu zde...">
-                </form>
-            </div>
-        {% endif %}
-    </div>
 
-    <div style="text-align: center;">
-        <h3>Účastníci</h3>
-        <hr>
-        {% for user in ucastnici  %}
-            <p>@{{user.username}}</p>
-        {% endfor %}
     </div>
 
 </div>

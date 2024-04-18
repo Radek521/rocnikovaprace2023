@@ -5,8 +5,75 @@
 <style>
     .home-container{
         display: grid;
-        grid-template-columns: 1fr 3fr;
+        grid-template-columns: 0.6fr 2.5fr 1.6fr;
     }
+
+    .message {
+    margin-top: 5px;
+    margin-bottom: 10px;
+    padding: 5px 5px 5px 5px;
+    padding-bottom: 10px;
+    border-radius: 5px;
+    width: 50%;
+    word-wrap: break-word;
+    }
+
+    .message-right {
+    background-color: #F4F3EA;
+    float: right;
+    }
+
+    .message-left {
+    float: left;
+    background-color: #CBD0D8; 
+    }
+
+    .messages-container {
+    max-height: 490px;
+    overflow-y: auto; 
+    
+    border-color:#393737;
+    border-width: 3px;
+    border-radius: 30px; 
+
+    text-align: center;
+
+    padding: 10px; 
+    margin: 10px;
+    background: linear-gradient(
+            90deg,
+            #ffe81e,
+            #f5ff3c
+            );
+    background-size: 100%;
+}
+
+.messages-container::-webkit-scrollbar {
+    width: 10px; 
+    border-radius: 10px;
+    padding: 2px,50px,2px,2px;
+}
+
+.messages-container::-webkit-scrollbar-track {
+    background: #454343; 
+    border-radius: 10px;
+}
+
+.messages-container::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 10px;
+}
+
+span{
+    font-weight: bold;
+}
+
+@media only screen and (max-width: 300px) {
+    #zmiz {
+    display: none;
+  }
+}
+
     
 </style>
 
@@ -16,38 +83,58 @@
 
 <div class="home-container">
 
-    <div style="text-align: center; margin-left: 30px; font-size: 20px;">
-        <h3>Témata: </h3>
-        <div>
-            <a href="{% url 'domovska' %}">Vše</a>
-        </div>
+    
+    <div id="zmiz" style="float: left; text-align: center; font-size: 18px;">
+        <p style="font-weight: bold;">Témata:</p>
+    
+        <a href="{% url 'domovska' %}">Vše</a><br>
+        
 
         {% for tema in temata %}
-        <div>
             <a href="{% url 'domovska' %}?q={{tema.jmeno}}">{{tema.jmeno}}</a>
-        </div>
+        <br>
         {% endfor %}
 
     </div>
 
     <div>
-        <p style="padding-left:30%;"> Právě je aktivní {{mistnost_count}} místností v této kategorii. ‎ ‎ ‎ <a href="{% url 'vytvor-mistnost' %}">Vytvořit vlastní místnost</a></p>
+        <p style=" text-align: center;"> Právě je aktivní {{mistnost_count}} místností v této kategorii. <br> <a href="{% url 'vytvor-mistnost' %}">Vytvořit vlastní místnost</a></p>
 
         <div>
             {% for mistnost in mistnosti %}
-            <div>
-                <hr>
-                <span> Vytvořeno uživatelem @{{mistnost.host.username}}</span> <br>
+            <div class="messages-container">
+                <span> Vytvořeno uživatelem {{mistnost.host.username}}</span> <br>
+                {% if mistnost.host.username ==  request.user.username %}
                 <a href="{% url 'uprav-mistnost' mistnost.id %}">Upravit</a>
                 <a href="{% url 'delete-mistnost' mistnost.id %}">Smazat</a>
-               
-                <h3>Místnost číslo {{mistnost.id}} : <a href="{% url 'mistnost' mistnost.id %}" class="entrmist">{{ mistnost.jmeno }}</a></h3>
-                <p>Obsahuje téma : {{mistnost.tema.jmeno}}</p>
-                <br>
+                {% endif %}
+                <h2>Místnost číslo {{mistnost.id}}:  <a href="{% url 'mistnost' mistnost.id %}" class="entrmist">{{ mistnost.jmeno }}</a></h2>
+                <p>Téma: {{mistnost.tema.jmeno}}</p>
             </div>
             {% endfor %}
         </div>
     </div>
+
+    <div class="messages-container" style="text-align: center; height: fit-content;">
+        <h3>Poslední aktivita</h3>
+        {% for zprava in zpravy_mistnosti %}
+        <div>
+            <small>
+            <span>{{zprava.user}}</span> před <span>{{zprava.vytvoreno|timesince}}</span>
+             v <span>{{zprava.mistnost}}</span> napsal:
+            </small><br>
+     
+            <small style="font-weight: bold;">"{{zprava}}"
+                {% if zprava.user == request.user %}
+            <a href="{% url 'delete-zprava' zprava.id %}">(X)</a>
+            {% endif %}
+            </small>
+        </div>
+        <br>
+        {% endfor %}
+    </div>
+
+
 </div>
 
 {% endblock content %}

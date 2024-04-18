@@ -32,5 +32,8 @@ class Zprava(models.Model):
     aktualizovano = models.DateTimeField(auto_now=True)
     vytvoreno = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        ordering = ['-aktualizovano','-vytvoreno']
+
     def __str__(self):
         return self.zprava[0:50]

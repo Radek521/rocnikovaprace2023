@@ -8,7 +8,7 @@ from django.contrib.auth.forms import UserCreationForm
 from .models import Mistnost, Tema, Zprava
 from django.http import HttpResponse
 from django.db.models import Q
-from .forms import MistnostForm
+from .forms import MistnostForm, UserForm
 
 def loginPage(request):
     page = 'login'
@@ -61,9 +61,9 @@ def registerPage(request):
 
 #vyvorime view na zaklade funkce, takze:
 def domovska(request):
-    #do teto funkce passnem data co requestujem, a vratime odpoved
-    #model manager
+    #do teto funkce passnem data co requestujem z vyhledavani, a vratime odpoved
     q = request.GET.get('q') if request.GET.get('q') != None else ""
+
     mistnosti = Mistnost.objects.filter(
         Q(tema__jmeno__icontains=q)|
         Q(jmeno__icontains=q)|
@@ -72,15 +72,17 @@ def domovska(request):
 
     temata = Tema.objects.all()
     mistnost_count = mistnosti.count()
+    zpravy_mistnosti = Zprava.objects.all()
 
-    context = {'mistnosti': mistnosti, 'temata': temata, 'mistnost_count': mistnost_count }
+    context = {'mistnosti': mistnosti, 'temata': temata, 'mistnost_count': mistnost_count, 'zpravy_mistnosti' : zpravy_mistnosti }
+    #vracime se zpatky na domovskou, s kontextem (jmeno mistnosti...)
     return render(request,'domovska.html', context)
 
 
 def mistnost(request,pk):
     #do teto funkce passnem data co requestujem, a vratime odpoved
     mistnost = Mistnost.objects.get(id=pk)
-    zpravy_mistnosti = mistnost.zprava_set.all().order_by('-vytvoreno')
+    zpravy_mistnosti = mistnost.zprava_set.all()#.order_by('-vytvoreno')
     ucastnici = mistnost.ucastnici.all()
     if request.method == 'POST':
         zprava = Zprava.objects.create(
@@ -94,6 +96,13 @@ def mistnost(request,pk):
     context = {'mistnost': mistnost, 'zpravy_mistnosti': zpravy_mistnosti,
                'ucastnici': ucastnici }
     return render(request,'mistnost.html', context)
+
+def userProfil(request, pk):
+    user = User.objects.get(id=pk)
+    mistnosti = user.mistnost_set.all()
+    context = {'user': user,'mistnosti': mistnosti }
+    return render(request,"profil.html", context)
+
 
 @login_required(login_url='/login')
 def vytvorMistnost(request):
@@ -126,6 +135,7 @@ def upravMistnost(request, pk):
 
 @login_required(login_url='/login')
 def deleteMistnost(request, pk):
+
     mistnost = Mistnost.objects.get(id=pk)
 
     if request.user != mistnost.host:
@@ -148,3 +158,15 @@ def deleteZprava(request, pk):
         zprava.delete()
         return redirect('domovska')
     return render(request,'delete.html',{'obj': zprava})
+
+@login_required(login_url='/login')
+def updateUser(request):
+    user = request.user
+    form = UserForm(instance=user)
+
+    if request.method == 'POST':
+        form = UserForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+            return redirect('domovska')                                     #pk=user.id (pro profil later)
+    return render(request,'update-user.html', {'form':form})

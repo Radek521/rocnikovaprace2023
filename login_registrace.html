@@ -4,37 +4,39 @@
 
 
 {% if page == 'login' %}
-<div style="text-align: center;">
-    <form method="POST" action="" style="max-width: 400px;
-    margin: 0 auto;">
+<div class="messages-container" style="width:40%; margin-left:30%; text-align: center;">
+
+    <form method="POST" action="" style="max-width: 400px; margin: 0 auto;">
         {% csrf_token %}
 
         <label>Uživ. jméno:</label>
-        <input type="text" name="username" placeholder="Zadejte jméno" /> <br> <br>
+        <input type="text" name="username" placeholder= "Zadejte jméno" /> <br> <br>
 
         <label>Vaše heslo:</label>
-        <input type="password" name="password" placeholder="Zadejte heslo" /> <br> <br>
+        <input type="password" name="password" placeholder= "Zadejte heslo" /> <br> <br>
 
         <input type="submit" value="Přihlásit se"/>
     </form>
 
-    <p>Ještě nezaregistrován?</p>
-    <a href="{% url 'register' %}">Registrace</a>
+    <p>Ještě nezaregistrován?
+    <a href="{% url 'register' %}">  Registrace</a></p>
+
 </div>
 
 {% else %}
 
-<div>
-    <form method="POST" action="" style=" max-width: 400px;
-    margin: 0 auto;
-    text-align: center;
-    ">
+<div class="messages-container" style="width:40%; margin-left:30% ;">
+    <form method="POST" action=""></form>
         {% csrf_token %}
+
         <div>
-        {{form.as_p}}
-        <br>
+            {% for field in form %}
+                <div style="text-align: center;">{{ field.label_tag }}</div>
+                <div style="width: 220px; margin-left: 29%;">{{ field }} <br><br></div>   
+            {% endfor %}
         </div>
-        <input type="submit" value="Registrovat se" />
+        <br>
+        <input type="submit" value="Registrovat se" style="width: 200px; margin-left: 34%;" />
     </form>
     <p style="text-align: center;">Již zaregistrován? <a href="{% url 'login' %}">Login</a> </p>
 </div>

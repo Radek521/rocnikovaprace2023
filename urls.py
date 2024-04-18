@@ -1,24 +1,21 @@
-"""
-URL configuration for projekt4ita project.
+#url file pro specifickou aplikaci
 
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/4.2/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
-from django.contrib import admin
-from django.urls import path, include
+from django.urls import path
+from .import views
 
+#zde volame cesty z views.py
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    #jsme v zacatku stranky, takze oh link nema priponu, spoji se s zaklad aplikaci, yeyyyy je to cisty
-    path('', include('zaklad.urls'))
-]
+    path('login/', views.loginPage, name='login'),
+    path('logout/', views.logoutUser, name='logout'),
+    path('register/', views.registerPage, name='register'),
+    path('', views.domovska, name='domovska'),
+    #do urls muzeme davat dynamickou hodnotu
+     path('mistnost/<str:pk>/', views.mistnost, name='mistnost'),
+     path('profil/<str:pk>/', views.userProfil, name='user-profil'),
+
+     path('vytvor-mistnost', views.vytvorMistnost, name='vytvor-mistnost'),
+     path('uprav-mistnost/<str:pk>/', views.upravMistnost, name='uprav-mistnost'),
+     path('delete-mistnost/<str:pk>/', views.deleteMistnost, name='delete-mistnost'),
+     path('delete-zprava/<str:pk>/', views.deleteZprava, name='delete-zprava'),
+     path('update-user/', views.updateUser, name='update-user')
+]    
